@@ -1,17 +1,17 @@
 .bg-sparta {
-    background-color: #e8344e !important;
+    background-color: #412a81 !important;
 }
 
 .btn-sparta {
     color: #ffffff !important;
-    background-color: #e8344e !important;
-    border-color: #e8344e !important;
+    background-color: #412a81 !important;
+    border-color: #412a81 !important;
 }
 
 .btn-outline-sparta {
-    color: #e8344e !important;
+    color: #412a81 !important;
     background-color: #ffffff !important;
-    border-color: #e8344e !important;
+    border-color: #412a81 !important;
 }
 
 .navbar-dark .navbar-nav .nav-link {
@@ -27,7 +27,11 @@
     max-width: 600px;
     margin: 10px auto;
 }
-
+.card {
+    width: 80%;
+   /*  max-width: 600px; */
+    margin: 10px auto;
+}
 .modal-header {
     border-bottom-color: #ffffff;
 }

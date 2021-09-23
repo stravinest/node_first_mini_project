@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- 게시판 글쓰기 페이지 post -->
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -45,7 +46,7 @@
     <title>스파르타 쇼핑몰 | 장바구니</title>
     <script>
       $(document).ready(function() {
-        get_goods();
+       // get_goods();
         $("#categorySelect").on("change", function() {
           get_goods($(this).val());
         });
@@ -58,6 +59,7 @@
       }
 
       function get_goods() {
+
         $("#goodsList").empty();
         $.ajax({
           type: "GET",
@@ -72,23 +74,42 @@
           }
         });
       }
+      
+      function posting() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = ('0' + (today.getMonth() + 1)).slice(-2);
+        var day = ('0' + today.getDate()).slice(-2);
+        var dateString = year + month + day;
+        console.log(dateString);
 
-      function order() {
+        let title = $('#title').val()
+        let writer = $("#writer").val()
+        let pwd = $("#pwd").val()
+        let content =$("#content").val()
+      
         $.ajax({
-          type: "GET",
-          url: `/api/cart`,
-          data: {},
-          success: function(response) {
-            let goods = response["cart"];
-            let cart = [];
-            for (let i = 0; i < goods.length; i++) {
-              cart.push({
-                goodsName: goods[i]["name"],
-                quantity: goods[i]["goodsId"]
-              });
+          type: "POST",
+          url: `/api/post`,
+          data: {
+            "date":dateString,
+            "title":title,
+            "writer":writer,
+            "pwd":pwd,
+            "content":content
+          },
+          error: function(xhr, status, error) {
+            if (status == 400) {
+              alert("존재하지 않는 상품입니다.");
             }
-            sessionStorage.setItem("cart", JSON.stringify(cart));
-            window.location.href = "/order";
+            window.location.href = "/";
+          },
+          success: function(response) {
+            if (response["result"] == "success") {
+              alert("등록 완료")
+              window.location.href = "/";
+            //  $("#cartModal").modal("show");
+            }
           }
         });
       }
@@ -208,16 +229,11 @@
     <nav
       class="navbar navbar-expand-sm navbar-dark bg-sparta justify-content-end"
     >
-      <a class="navbar-brand" href="/goods">
-        <img
-          src="/static/logo_big_tr.png"
-          width="30"
-          height="30"
-          class="d-inline-block align-top"
-          alt=""
-        />
-        스파르타 쇼핑몰
+      <a class="navbar-brand" href="/">
+
+      전체 목록 조회
       </a>
+      <div class="navbar-brand" >게시판 글쓰기</div>
       <button
         class="navbar-toggler ml-auto"
         type="button"
@@ -232,7 +248,7 @@
       <div
         class="navbar-collapse collapse flex-grow-0 ml-auto"
         id="navbarSupportedContent"
-        style=""
+        
       >
         <ul class="navbar-nav mr-auto text-right">
           <li class="nav-item" id="link-cart">
@@ -294,56 +310,40 @@
         </ul>
       </div>
     </nav>
+
+
+    <!-- 글쓰기 등록 view -->
     <div class="wrap">
-      <div class="mb-3">
-        <h4>
-          <i class="fa fa-shopping-cart mr-1" aria-hidden="true"></i>장바구니
-        </h4>
-      </div>
-      <div id="goodsList">
-        <div class="card mb-2" onclick="location.href='#'">
-          <div class="row no-gutters">
-            <div class="col-4" style="background: #868e96;">
-              <img
-                src="https://cdn.pixabay.com/photo/2016/09/07/19/54/wines-1652455_1280.jpg"
-                class="card-img-top h-100"
-                alt="..."
-              />
-            </div>
-            <div class="col-8">
-              <div class="card-body py-1">
-                <div class="card-title row mt-2">
-                  <p class="font-weight-bold col" style="display: inline">
-                    상품 1
-                  </p>
-                  <span class="card-price col text-right">$6.20</span>
-                </div>
-                <div class="form-group row mr-0">
-                  <div class="col-7 pr-2">
-                    <button class="btn btn-outline-sparta btn-block">
-                      삭제
-                    </button>
-                  </div>
-                  <!--                                    <label for="numberSelect" class="col col-form-label">수량</label>-->
-                  <select class="custom-select col-5" id="numberSelect">
-                    <option selected value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">제 목</span>
         </div>
+        <input id = "title" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
       </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default2">작성자명</span>
+        </div>
+        <input id ="writer" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default3">비밀번호</span>
+        </div>
+        <input id = "pwd" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+      </div>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">작성내용</span>
+        </div>
+        <textarea id ="content" class="form-control" aria-label="With textarea"></textarea>
+      </div>
+      
       <hr />
 
-      <div class="row mb-3">
-        <div class="col-5">총 상품금액</div>
-        <div class="col-7 text-right" id="priceSum">$6.20</div>
-      </div>
-      <button type="button" class="btn btn-sparta btn-block" onclick="order()">
-        구매
+      
+      <button type="button" class="btn btn-sparta btn-block" onclick="posting()">
+        글쓰기 등록
       </button>
     </div>
   </body>

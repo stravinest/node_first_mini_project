@@ -27,12 +27,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.0/socket.io.js"></script>
 
     <link href="/static/mystyle.css" rel="stylesheet">
-    <title>스파르타 쇼핑몰 | 상품 목록</title>
+    <title>게시판 전체 목록 조회</title>
     <script>
         
         //카테고리셀렉트값이 변경이 도니다면 .get_goods() 을 실행하라 그런데 $(this).val()값을 넘겨준다.
         $(document).ready(function () {
-            get_goods()
+            get_board()
             $("#categorySelect").on("change", function () {
                 get_goods($(this).val())
             })
@@ -44,46 +44,42 @@
             window.location.href = "/"
         }
 
-        function get_goods(category) {
-            $("#goodsList").empty()
+        function get_board(category) {//화면 실행시 리스트 함수 호출
+            $("#boardList").empty()
             console.log(category)
             $.ajax({
                 type: "GET",
-                url: `/api/goods${category ? "?category=" + category : ""}`,
+                url: `/api/list${category ? "?category=" + category : ""}`,
                 data: {},
                 success: function (response) {
-                    let goods = response["goods"]
-                    for (let i = 0; i < goods.length; i++) {
-                        make_card(goods[i])
-
+                    let boards = response["boards"]
+                    let year=String(boards[0]["date"]).substring(0,4);
+                    console.log(year)
+                    console.log(boards[0]["date"])
+                    
+                    for (let i = 0; i < boards.length; i++) {
+                        make_list(boards[i])
+                        
                     }
                 }
             })
         }
 
-        function make_card(item) {
-            let htmlTemp = `<div>
-                                    <div class="card mb-2" onclick="location.href='/detail?goodsId=${item["goodsId"]}'">
-                                        <div class="row no-gutters">
-                                            <div class="col-sm-5" style="background: #868e96;">
-                                                <img src="${item["thumbnailUrl"]}"
-                                                     class="card-img-top h-100" alt="...">
-                                            </div>
-                                            <div class="col-sm-7 d-flex">
-                                                <div class="card-body flex-fill">
-                                                    <div class="card-title mb-auto">
-                                                        <h5 style="display: inline">${item["name"]}</h5>
-                                                        <span class="card-price ml-2">$${number2decimals(item["price"])}</span>
-                                                    </div>
-                                                    <span class="badge badge-secondary">${item["category"]}</span>
-                                                    <!--                                <p class="card-text"><small class="text-muted">drink</small></p>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>`
-            $("#goodsList").append(htmlTemp)
+        function make_list(boards) { // 리스트 뿌리기
+            let htmlTemp = ` <div id="boardList" class="card">
+            <h5 class="card-header">${String(boards["date"]).substring(0,4)}년
+                ${String(boards["date"]).substring(4,6)}월
+                ${String(boards["date"]).substring(6,boards.length)}일
+                ${boards["writer"]}</h5>
+            <div class="card-body">
+              <h5 class="card-title">${boards["title"]}</h5>
+              <p class="card-text">${boards["content"]}</p>
+            </div>
+        </div>`
+            $("#boardList").append(htmlTemp)
         }
+
+
 
         function makeNoti(data) {
             let htmlTemp = `<div class="alert alert-sparta alert-dismissible show fade" role="alert" id="customerAlert">
@@ -112,46 +108,20 @@
 
 <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-sparta justify-content-end">
-        <a class="navbar-brand" href="/goods">
-            <img src="/static/logo_big_tr.png" width="30" height="30" class="d-inline-block align-top" alt="">
-            스파르타 쇼핑몰
+        <a class="navbar-brand" href="/">
+            <div  width="30px" height="100px" class="d-inline-block align-top" alt="">
+            전체 게시판 목록
+            </div>
         </a>
         <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="true"
             aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-        <div class="navbar-collapse collapse flex-grow-0 ml-auto" id="navbarSupportedContent" style="">
+        <div class="navbar-collapse collapse flex-grow-0 ml-auto" id="navbarSupportedContent" >
             <ul class="navbar-nav mr-auto text-right">
                 <li class="nav-item" id="link-cart">
-                    <a class="nav-link" href="/cart">
-                        장바구니<i class="fa fa-shopping-cart ml-2" aria-hidden="true"></i>
+                    <a class="nav-link" href="/post">
+                        글쓰기<i class="fa " aria-hidden="true"></i>
                     </a>
-                </li>
-                <li class="nav-item" id="link-logout">
-                    <a class="nav-link" data-toggle="modal" data-target="#signOutModal">
-                        로그아웃<i class="fa fa-sign-out ml-2" aria-hidden="true"></i>
-                    </a>
-                    <div class="modal text-left" id="signOutModal" tabindex="-1" role="dialog"
-                        aria-labelledby="signOutModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="signOutModalLabel">로그아웃</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    로그아웃하시면 장바구니가 사라져요!
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-sparta" data-dismiss="modal">취소
-                                    </button>
-                                    <button type="button" class="btn btn-sparta" onclick="sign_out()">로그아웃하기
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </li>
             </ul>
         </div>
@@ -161,38 +131,27 @@
         <div>
             <div class="form-group row mr-0">
                 <label for="categorySelect" class="col-4 col-form-label">카테고리</label>
-                <select class="form-control col-8" id="categorySelect">
+                <!-- 이아이디 값을 받아옴 -->
+                <select id="categorySelect">
                     <option value="" selected>전체</option>
-                    <option value="drink">음료</option>
-                    <option value="food">음식</option>
+                    <option value="drink">제목</option>
+                    <option value="drink">작성자명</option>
+                    <option value="food">작성날짜</option>
                 </select>
+                <input type="text" >
             </div>
         </div>
-        <div id="goodsList" class="mb-5">
-            <div>
-                <div class="card mb-2" onclick="location.href='#'">
-                    <div class="row no-gutters">
-                        <div class="col-sm-5" style="background: #868e96;">
-                            <img src="https://cdn.pixabay.com/photo/2016/09/07/19/54/wines-1652455_1280.jpg"
-                                class="card-img-top h-100" alt="...">
-                        </div>
-                        <div class="col-sm-7 d-flex">
-                            <div class="card-body flex-fill">
-                                <div class="card-title mb-auto">
-                                    <h5 style="display: inline">상품 1</h5>
-                                    <span class="card-price ml-2">$6.20</span>
+        
+        
 
-                                </div>
-                                <span class="badge badge-secondary">drink</span>
-                                <!--                                <p class="card-text"><small class="text-muted">drink</small></p>-->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+    <div id="boardList" class="card">
+        <h5 class="card-header">Featured</h5>
+        <div class="card-body">
+          <h5 class="card-title">Special title treatment</h5>
+          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
         </div>
     </div>
-
 
 </body>
 

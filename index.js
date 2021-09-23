@@ -14,13 +14,13 @@ app.use((req, res, next) => {
 });
 
 
-const goodsRouter = require("./routers/goods"); // 주소창 /api/다음 주소의 파일들을 routers의 goods라는 파일에 저장
-app.use("/api", [goodsRouter]);
+const boardRouter = require("./routers/board"); // 주소창 /api/다음 주소의 파일들을 routers의 goods라는 파일에 저장
+app.use("/api", [boardRouter]);
 
 app.set('views', __dirname + '/views'); //ejs 세팅 
 app.set('view engine', 'ejs');
 
-app.get('/home',(req,res)=>{ //주소창 localhost /home  ->views의  index페이지로 
+app.get('/',(req,res)=>{ //주소창 localhost /  ->views의  index페이지로 
   res.render('index');
 
 })
@@ -30,8 +30,8 @@ app.get('/home',(req,res)=>{ //주소창 localhost /home  ->views의  index페�
      res.render('detail');
 })
  
- app.get('/cart',(req,res)=>{
-    res.render('cart')
+ app.get('/post',(req,res)=>{
+    res.render('post')
  })
  
  app.get('/order',(req,res)=>{
