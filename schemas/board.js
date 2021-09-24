@@ -28,7 +28,13 @@ const boardSchema = new Schema({
   content: {
     type: String,
     required: true
+  },
+  searchDate:{
+    type: String,
+    required: true
   }
+
+
 });
 
 module.exports = mongoose.model("board", boardSchema);

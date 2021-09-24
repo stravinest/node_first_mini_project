@@ -75,6 +75,7 @@
 
         let dateString = year + month + day+hour+minites+seconds;
         console.log(dateString);
+        let searchDate= year+"년" + month+"월" + day+"일";
 
         let title = $('#title').val()
         let writer = $("#writer").val()
@@ -90,7 +91,8 @@
             "title":title,
             "writer":writer,
             "pwd":pwd,
-            "content":content
+            "content":content,
+            "searchDate":searchDate
           },
           error: function(xhr, status, error) {
             if (status == 400) {
