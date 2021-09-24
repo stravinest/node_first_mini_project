@@ -126,6 +126,11 @@
             function number2decimals(num) {
                 return (Math.round(num * 100) / 100).toFixed(2);
             }
+        const enterkey=()=>{
+            if (window.event.keyCode == 13){
+            search();
+            }
+        }
         </script>
         <style>
             .card {
@@ -179,7 +184,7 @@
                         <option value="date">작성날짜</option>
                     </select>
                     <input id ="searchText" type="text">
-                    <button onclick="search()">조회</button>
+                    <button onclick="search()" onkeyup="enterkey()">조회</button>
                 </div>
             </div>
 

@@ -79,12 +79,11 @@ router.get("/search", async (req, res) => {
     const {searchText,category  } = req.query;
     if(category=="title"){
     const data = await board.find({title: new RegExp(searchText)}).sort("-date")
-    console.log(data)
     res.json({ data: data });
     }
     else if(category=="writer"){
         const data = await board.find({writer: new RegExp(searchText)}).sort("-date")
-        console.log(data)
+
         res.json({ data: data })
     }
     else if(category=="date"){  
@@ -93,7 +92,7 @@ router.get("/search", async (req, res) => {
     }
     else{
         console.log(searchText)
-        const data = await board.find({ title : new RegExp(searchText)}&&{writer: new RegExp(searchText)}&&{searchDate: new RegExp(searchText)}).sort("-date") 
+        const data = await board.find({$or: [{title : new RegExp(searchText)},{writer: new RegExp(searchText)},{searchDate: new RegExp(searchText)}]}).sort("-date") 
         console.log(data)
         res.json({ data: data })
       //  await board.find({ : {$search:searchText}})  
@@ -101,7 +100,5 @@ router.get("/search", async (req, res) => {
     }
     
 });
-
-
 
 module.exports = router;
