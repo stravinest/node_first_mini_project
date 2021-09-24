@@ -8,8 +8,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -43,38 +41,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="/static/mystyle.css" rel="stylesheet" />
-    <title>스파르타 쇼핑몰 | 장바구니</title>
+    <title>게시판 글쓰기 페이지</title>
     <script>
       $(document).ready(function() {
        // get_goods();
-        $("#categorySelect").on("change", function() {
-          get_goods($(this).val());
-        });
+        
       });
 
-      function sign_out() {
-        $.removeCookie("mytoken", { path: "/" });
-        $.removeCookie("userName", { path: "/" });
-        window.location.href = "/";
-      }
-
-      function get_goods() {
-
-        $("#goodsList").empty();
-        $.ajax({
-          type: "GET",
-          url: `/api/cart`,
-          data: {},
-          success: function(response) {
-            let goods = response["cart"];
-            for (let i = 0; i < goods.length; i++) {
-              make_card(goods[i]["goods"], goods[i]["quantity"]);
-            }
-            getSum();
-          }
-        });
-      }
-      
+      //등록 
       function posting() {
         let today = new Date();
         let year = today.getFullYear();
@@ -134,106 +108,6 @@
         });
       }
 
-      function make_card(item, quantity) {
-        let htmlTemp = `<div class="card mb-2">
-                                    <div class="row no-gutters">
-                                        <div class="col-4" style="background: #868e96;" onclick="location.href='/detail?goodsId=${
-                                          item["goodsId"]
-                                        }'">
-                                            <img src="${item["thumbnailUrl"]}"
-                                                 class="card-img-top h-100" alt="...">
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="card-body py-1">
-                                                <div class="card-title row mt-2">
-                                                    <p class="font-weight-bold col" style="display: inline">${
-                                                      item["name"]
-                                                    }</p>
-                                                    <span class="card-price col text-right">$${number2decimals(
-                                                      item["price"]
-                                                    )}</span>
-
-                                                </div>
-                                                <div class="form-group row mr-0">
-                                                    <div class="col-7 pr-2">
-                                                        <button class="btn btn-outline-sparta btn-block" onclick="removeItem(${
-                                                          item["goodsId"]
-                                                        })">삭제</button>
-                                                    </div>
-                                                    <select class="custom-select col-5" id="numberSelect-${
-                                                        item.goodsId
-                                                    }">
-                                                        ${[1, 2, 3, 4, 5]
-                                                        .map(
-                                                            (i) =>
-                                                            `<option ${
-                                                                i === quantity ? "selected" : ""
-                                                            } value="${i}">${i}</option>`
-                                                        )
-                                                        .join(" ")}
-                                                    </select>
-                                                </div>
-
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>`;
-        $("#goodsList").append(htmlTemp);
-        $(`#numberSelect-${item["goodsId"]}`).change(function() {
-          // console.log(parseInt($(this).val()))
-          $.ajax({
-            type: "PATCH",
-            url: `/api/goods/${item["goodsId"]}/cart`,
-            data: {
-              quantity: parseInt($(this).val())
-            },
-            success: function(response) {
-              if (response["result"] == "success") {
-                console.log(response["msg"]);
-                getSum();
-              }
-            }
-          });
-        });
-      }
-
-      function removeItem(goodsId) {
-        $.ajax({
-          type: "DELETE",
-          url: `/api/goods/${goodsId}/cart`,
-          data: {},
-          success: function(response) {
-            if (response["result"] == "success") {
-              get_goods();
-            }
-          }
-        });
-      }
-
-      function getSum() {
-        let $prices = $(".card-price");
-        let $selects = $("select");
-        if ($prices.length != $selects.length) {
-          console.log("길이가 맞지 않습니다.");
-          return;
-        }
-        let sum = 0;
-        for (let i = 0; i < $prices.length; i++) {
-          let price = parseFloat(
-            $($prices[i])
-              .text()
-              .replace("$", "")
-          );
-          let count = parseInt($($selects[i]).val());
-          // console.log(price, count)
-          sum += price * count;
-        }
-        $("#priceSum").text("$" + number2decimals(sum));
-        sessionStorage.setItem("priceSum", number2decimals(sum));
-      }
-
       function number2decimals(num) {
         return (Math.round(num * 100) / 100).toFixed(2);
       }
@@ -253,7 +127,7 @@
 
       전체 게시판 목록
       </a>
-      <div class="navbar-brand" >게시판 글쓰기</div>
+      <div class="navbar-brand" ></div>
       <button
         class="navbar-toggler ml-auto"
         type="button"
@@ -272,17 +146,10 @@
       >
         <ul class="navbar-nav mr-auto text-right">
           <li class="nav-item" id="link-cart">
-            <a class="nav-link" href="/cart">
-              장바구니<i
-                class="fa fa-shopping-cart ml-2"
-                aria-hidden="true"
-              ></i>
-            </a>
+            
           </li>
           <li class="nav-item" id="link-logout">
-            <a class="nav-link" data-toggle="modal" data-target="#signOutModal">
-              로그아웃<i class="fa fa-sign-out ml-2" aria-hidden="true"></i>
-            </a>
+           
             <div
               class="modal text-left"
               id="signOutModal"
@@ -350,7 +217,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text" id="inputGroup-sizing-default3">비밀번호</span>
         </div>
-        <input id = "pwd" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        <input id = "pwd" type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
       </div>
       <div class="input-group">
         <div class="input-group-prepend">

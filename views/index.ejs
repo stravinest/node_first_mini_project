@@ -7,8 +7,7 @@
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-        <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+         
         <!-- Bootstrap CSS -->
         <link
             rel="stylesheet"
@@ -46,28 +45,55 @@
             //카테고리셀렉트값이 변경이 도니다면 .get_goods() 을 실행하라 그런데 $(this).val()값을 넘겨준다.
             $(document).ready(function () {
                 get_board()
-                $("#categorySelect").on("change", function () {
-                    get_goods($(this).val())
-                })
+
+                // $("#categorySelect").on("change", function () {
+                //     search($(this).val())
+                // })
             })
-
-            function sign_out() {
-                $.removeCookie('mytoken', {path: '/'});
-                $.removeCookie('userName', {path: '/'});
-                window.location.href = "/"
-            }
-
-            function get_board(category) { //화면 실행시 리스트 함수 호출
-                $("#boardList").empty()
+            //검색
+            function search() {
+                let category=$('#categorySelect').val()
+                let searchText = $('#searchText').val() 
+                if(searchText==""){
+                    alert("검색어를 입력해주세요")
+                    return
+                }
                 console.log(category)
+                console.log(searchText)
                 $.ajax({
                     type: "GET",
-                    url: `/api/list${category
-                        ? "?category=" + category
-                        : ""}`,
+                    url: `/api/search?searchText=${searchText}&${category? "category=" + category: ""}`,
+                    data: {},
+                    success: function (response) {
+                        let data = response["data"]
+                        console.log(data)
+                        if(data!=""){
+                            $("#boardList").empty()       
+                        let year = String(data[0]["date"]).substring(0, 4);
+    
+                        for (let i = 0; i < data.length; i++) {
+                            make_list(data[i])
+
+                        }
+                    }
+                    else{
+                        alert('검색결과가 없습니다.')
+                    }
+                    }
+                })
+                
+            }
+
+            function get_board() { //화면 실행시 리스트 함수 호출
+                $("#boardList").empty()
+                
+                $.ajax({
+                    type: "GET",
+                    url: `/api/list`,
                     data: {},
                     success: function (response) {
                         let boards = response["boards"]
+                        if(boards!=""){
                         let year = String(boards[0]["date"]).substring(0, 4);
                         console.log(year)
                         console.log(boards[0]["date"])
@@ -76,6 +102,7 @@
                             make_list(boards[i])
 
                         }
+                    }
                     }
                 })
             }
@@ -94,15 +121,7 @@
                 $("#boardList").append(htmlTemp)
             }
 
-            function makeNoti(data) {
-                let htmlTemp = `<div class="alert alert-sparta alert-dismissible show fade" role="alert" id="customerAlert">
-                                    ${data["userName"]}님이 방금 <a href="#" class="alert-link">${data["goodsName"]}</a>을 구매했어요!
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>`
-                $("body").append(htmlTemp)
-            }
+       
 
             function number2decimals(num) {
                 return (Math.round(num * 100) / 100).toFixed(2);
@@ -155,11 +174,12 @@
                     <!-- 이아이디 값을 받아옴 -->
                     <select id="categorySelect">
                         <option value="" selected="selected">전체</option>
-                        <option value="drink">제목</option>
-                        <option value="drink">작성자명</option>
-                        <option value="food">작성날짜</option>
+                        <option value="title">제목</option>
+                        <option value="writer">작성자명</option>
+                        <option value="date">작성날짜</option>
                     </select>
-                    <input type="text">
+                    <input id ="searchText" type="text">
+                    <button onclick="search()">조회</button>
                 </div>
             </div>
 

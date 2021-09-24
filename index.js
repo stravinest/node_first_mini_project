@@ -34,10 +34,6 @@ app.get('/',(req,res)=>{ //주소창 localhost /  ->views의  index페이지로
     res.render('post')
  })
  
- app.get('/order',(req,res)=>{
-  res.render('order')
-})
-
 
 
 app.listen(port, () => {

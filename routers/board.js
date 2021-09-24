@@ -1,23 +1,15 @@
 const express = require("express");
+const bcrypt = require('bcrypt')
 const board = require("../schemas/board");
 
-const Cart = require("../schemas/cart");
-
 const router = express.Router();
-
-const cheerio = require("cheerio");
-const axios = require("axios");
-const iconv = require("iconv-lite");
-const url =
-    "http://www.yes24.com/24/Category/BestSeller";
-
 
 //글등록
 router.post('/post', async (req, res) => {
     try {
         const { no,date, title, writer, pwd,content} = req.body;
-
-        await board.create({ no,date, title, writer,pwd,content });
+        const encryptedPassword = bcrypt.hashSync(pwd,10)//비밀번호 값
+        await board.create({ no,date, title, writer,pwd:encryptedPassword,content });
         res.send({ result: "success" });
     } catch (err) {
         console.error(err);
@@ -49,10 +41,12 @@ router.put('/adjust/:no', async (req, res) => {
 
     const { no } = req.params;
     const { title,writer,pwd,content }=req.body;
-    const boards = await board.findOne({ no : no });
-    console.log(pwd)
-    console.log(boards["pwd"])
-    if(pwd !=boards["pwd"]){
+    const boards = await board.findOne({ no : no }); //기존 디피저장패스워드
+
+   
+    console.log(bcrypt.compareSync(pwd,boards["pwd"]))
+
+    if(!bcrypt.compareSync(pwd,boards["pwd"])){
         res.send({ result: "fail" }); 
     }
     else{
@@ -67,10 +61,54 @@ router.put('/adjust/:no', async (req, res) => {
 
 router.delete("/delete/:no", async (req, res) => {
     const { no } = req.params
-    console.log(no)
+    const { pwd }=req.body;
+    const boards = await board.findOne({ no : no });
+    
+    if(!bcrypt.compareSync(pwd,boards["pwd"])){
+        res.send({ result: "fail" }); 
+    }
+    else{
     await board.deleteOne({ no });
     res.send({ result: "success" });
+    }
 })
+
+//검색
+router.get("/search", async (req, res) => {
+    const {searchText,category  } = req.query;
+    console.log(searchText)
+    console.log(category)
+    
+    if(category=="title"){
+      
+    const data = await board.find({title: new RegExp(searchText)}).sort("-date")
+    console.log(data)
+    res.json({ data: data });
+    }
+    else if(category=="writer"){
+        const data = await board.find({writer: new RegExp(searchText)}).sort("-date")
+        console.log(data)
+        res.json({ data: data })
+    }
+    else if(category=="date"){
+        const data = await board.find({date: new RegExp(searchText)}).sort("-date") 
+        console.log(data)
+        res.json({ data: data })
+    }
+    else{
+        const data = await board.find({ title : new RegExp(searchText)}||{writer: new RegExp(searchText)}||{date: new RegExp(searchText)}).sort("-date") 
+        console.log(data)
+        res.json({ data: data })
+      //  await board.find({ : {$search:searchText}})  
+
+    }
+    
+            
+
+    
+    // const boards = await board.find({ }).sort("-date");
+    // res.json({ boards: boards });
+});
 
 // router.patch("/goods/:goodsId/cart", async (req, res) => {
 //     const { goodsId } = req.params;

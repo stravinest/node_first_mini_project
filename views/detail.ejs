@@ -6,8 +6,7 @@
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-        <link rel="icon" href="/static/favicon.ico" type="image/x-icon"/>
-        <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon"/>
+      
         <!-- Bootstrap CSS -->
         <link
             rel="stylesheet"
@@ -55,12 +54,7 @@
                 });
             });
 
-            function sign_out() {
-                $.removeCookie("mytoken", {path: "/"});
-                $.removeCookie("userName", {path: "/"});
-                window.location.href = "/";
-            }
-
+         
             //디테일 표시
             function get_detail() {
                 $.ajax({
@@ -127,16 +121,22 @@
                 });
 
             }
-
+            //삭제
             function deleted(){
+                let pwd = $("#pwd").val()
+                if (pwd == "") {
+                    alert('패스워드를 입력하세요')
+                    return
+                }
                 $.ajax({
                     type: "DELETE",
                     url: `/api/delete/${no}`,
                     data: {
+                        "pwd": pwd
                     },
                     error: function (xhr, status, error) {
                         if (status == 400) {
-                            alert("존재하지 않는 게시글입니다.");
+                            alert("존재하지않는 게시글입니다.");
                         }
                         window.location.href = "/";
                     },
@@ -146,22 +146,18 @@
                             alert('삭제완료')
                             window.location.href = "/";
                         }
+                        if (response["result"] == "fail") {
+
+                            alert('비밀번호가 틀립니다.')
+                            return
+                        }
                     }
                 });
-
+            
 
             }
 
-            function buyNow() {
-                sessionStorage.setItem("priceSum", sessionStorage.getItem("goodsPrice"));
-                sessionStorage.setItem("cart", JSON.stringify([
-                    {
-                        goodsName: sessionStorage.getItem("goodsName"),
-                        quantity: sessionStorage.getItem("orderNum")
-                    }
-                ]));
-                window.location.href = "/order";
-            }
+       
 
             function number2decimals(num) {
                 return (Math.round(num * 100) / 100).toFixed(2);
@@ -175,13 +171,8 @@
     <body>
         <nav class="navbar navbar-expand-sm navbar-dark bg-sparta justify-content-end">
             <a class="navbar-brand" href="/">
-                <img
-                    src="/static/logo_big_tr.png"
-                    width="30"
-                    height="30"
-                    class="d-inline-block align-top"
-                    alt=""/>
-                전체목록페이지이동
+               
+                전체 게시판 목록
             </a>
             <button
                 class="navbar-toggler ml-auto"
@@ -198,14 +189,10 @@
                 id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto text-right">
                     <li class="nav-item" id="link-cart">
-                        <a class="nav-link" href="/cart">
-                            장바구니<i class="fa fa-shopping-cart ml-2" aria-hidden="true"></i>
-                        </a>
+                      
                     </li>
                     <li class="nav-item" id="link-logout">
-                        <a class="nav-link" data-toggle="modal" data-target="#signOutModal">
-                            로그아웃<i class="fa fa-sign-out ml-2" aria-hidden="true"></i>
-                        </a>
+                        
                         <div
                             class="modal text-left"
                             id="signOutModal"
@@ -269,7 +256,7 @@
                 </div>
                 <input
                     id="pwd"
-                    type="text"
+                    type="password"
                     class="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default">
