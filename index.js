@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended: false})) // 미들 웨어 사용 준비 �
 app.use(express.json())// 데이터를 사용하기 쉽게 가공해주는 미들웨어
 app.use(express.static('public'));//어플리케이션의 정적 자산을 제공하는 역할을 하는 static static 사용 선언
 app.use((req, res, next) => {
-  console.log(req);
+  //console.log(req);
   next();
 });
 

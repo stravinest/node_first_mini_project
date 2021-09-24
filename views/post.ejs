@@ -76,11 +76,30 @@
       }
       
       function posting() {
-        var today = new Date();
-        var year = today.getFullYear();
-        var month = ('0' + (today.getMonth() + 1)).slice(-2);
-        var day = ('0' + today.getDate()).slice(-2);
-        var dateString = year + month + day;
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = ('0' + (today.getMonth() + 1)).slice(-2);
+        let day = ('0' + today.getDate()).slice(-2);
+        var hour = today.getHours();
+        hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+        var minites = today.getMinutes();
+        minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+        var seconds = today.getSeconds();
+        seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+        
+        let components = [
+            today.getYear(),
+            today.getMonth(),
+            today.getDate(),
+            today.getHours(),
+            today.getMinutes(),
+            today.getSeconds(),
+            today.getMilliseconds()
+        ];
+
+        let no = components.join('');
+
+        let dateString = year + month + day+hour+minites+seconds;
         console.log(dateString);
 
         let title = $('#title').val()
@@ -92,6 +111,7 @@
           type: "POST",
           url: `/api/post`,
           data: {
+            "no":no,
             "date":dateString,
             "title":title,
             "writer":writer,
@@ -231,7 +251,7 @@
     >
       <a class="navbar-brand" href="/">
 
-      전체 목록 조회
+      전체 게시판 목록
       </a>
       <div class="navbar-brand" >게시판 글쓰기</div>
       <button

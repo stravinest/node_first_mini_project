@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 //글 등록 schema
 const { Schema } = mongoose;
 const boardSchema = new Schema({
+  no: {
+    type: String,
+    required: true,
+    unique: true
+  },
   date: {
     type: Number,
     required: true,

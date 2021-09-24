@@ -3,6 +3,8 @@
 }
 
 .btn-sparta {
+    margin: auto!important;
+    width: 49.5% !important;
     color: #ffffff !important;
     background-color: #412a81 !important;
     border-color: #412a81 !important;
@@ -28,9 +30,12 @@
     margin: 10px auto;
 }
 .card {
+    
     width: 80%;
-   /*  max-width: 600px; */
+     max-width: 600px; 
     margin: 10px auto;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 .modal-header {
     border-bottom-color: #ffffff;

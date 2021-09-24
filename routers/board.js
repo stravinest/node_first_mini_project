@@ -15,9 +15,9 @@ const url =
 //글등록
 router.post('/post', async (req, res) => {
     try {
-        const { date, title, writer, pwd,content} = req.body;
+        const { no,date, title, writer, pwd,content} = req.body;
 
-        await board.create({ date, title, writer,pwd,content });
+        await board.create({ no,date, title, writer,pwd,content });
         res.send({ result: "success" });
     } catch (err) {
         console.error(err);
@@ -28,8 +28,8 @@ router.post('/post', async (req, res) => {
 //메인리스트 뿌리기
 router.get("/list", async (req, res, next) => {
     try {
+        
         const boards = await board.find({ }).sort("-date");
-        console.log (boards)
         res.json({ boards: boards });
     } catch (err) {
         console.error(err);
@@ -37,6 +37,52 @@ router.get("/list", async (req, res, next) => {
     }
 });
 
+//상세 조회
+router.get("/detail/:no", async (req, res) => {
+    const { no } = req.params;
+    const boards = await board.findOne({ no : no });
+    res.json({ detail: boards });
+});
+
+//상세 수정
+router.put('/adjust/:no', async (req, res) => {
+
+    const { no } = req.params;
+    const { title,writer,pwd,content }=req.body;
+    const boards = await board.findOne({ no : no });
+    console.log(pwd)
+    console.log(boards["pwd"])
+    if(pwd !=boards["pwd"]){
+        res.send({ result: "fail" }); 
+    }
+    else{
+        await board.updateOne({no},{$set:{title}})
+        await board.updateOne({no},{$set:{writer}})
+        await board.updateOne({no},{$set:{content}})
+        res.send({ result: "success" });    
+    }
+
+   
+});
+
+router.delete("/delete/:no", async (req, res) => {
+    const { no } = req.params
+    console.log(no)
+    await board.deleteOne({ no });
+    res.send({ result: "success" });
+})
+
+// router.patch("/goods/:goodsId/cart", async (req, res) => {
+//     const { goodsId } = req.params;
+//     const { quantity } = req.body;
+
+//     const isGoodsInCart = await Cart.find({ goodsId });
+//     if (isGoodsInCart.length > 0) {
+//         await Cart.updateOne({ goodsId }, { $set: { quantity } })
+//     }
+//     res.send({ result: "success" });
+
+// })
 
 
 //     router.get("/goods/add/crawling", async (req, res) => {
@@ -83,11 +129,7 @@ router.get("/list", async (req, res, next) => {
 
 
 
-// router.get("/goods/:goodsId", async (req, res) => {
-//     const { goodsId } = req.params;
-//     goods = await Goods.findOne({ goodsId: goodsId });
-//     res.json({ detail: goods });
-// });
+
 
 
 
