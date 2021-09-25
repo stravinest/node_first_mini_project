@@ -1,10 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); //mongoose 실행
 
-const connect = () => {
+const connect = () => { //index.js 파일실행시 바로 실행 되어짐
   mongoose
-    .connect("mongodb://stravin:test@3.34.255.91:27017/admin", {
+    .connect("mongodb://stravin:test@3.34.255.91:27017/admin", {//아이디 비밀번호@주소설정
       useNewUrlParser: true,
-     
       ignoreUndefined: true
 
        })

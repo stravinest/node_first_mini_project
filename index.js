@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const connect = require('./schemas');
-connect();
+const connect = require('./schemas'); //스키마 연결 index.js 
+connect();//연결 실행
 
 app.use(express.urlencoded({extended: false})) // 미들 웨어 사용 준비 완료
 app.use(express.json())// 데이터를 사용하기 쉽게 가공해주는 미들웨어
@@ -22,19 +22,17 @@ app.set('view engine', 'ejs');
 
 app.get('/',(req,res)=>{ //주소창 localhost /  ->views의  index페이지로 
   res.render('index');
-
 })
 
 
- app.get('/detail', (req, res) => {
+ app.get('/detail', (req, res) => {//주소창 /detail  페이지 detail이동
      res.render('detail');
 })
  
- app.get('/post',(req,res)=>{
+ app.get('/post',(req,res)=>{//주소창 /post  페이지 post이동
     res.render('post')
  })
  
-
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)

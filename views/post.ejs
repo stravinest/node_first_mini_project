@@ -44,14 +44,12 @@
     <title>게시판 글쓰기 페이지</title>
     <script>
       $(document).ready(function() {
-       // get_goods();
-        
       });
 
       //등록 
       function posting() {
-        let today = new Date();
-        let year = today.getFullYear();
+        let today = new Date(); //오늘 날짜 가져오고
+        let year = today.getFullYear(); 
         let month = ('0' + (today.getMonth() + 1)).slice(-2);
         let day = ('0' + today.getDate()).slice(-2);
         var hour = today.getHours();
@@ -86,13 +84,13 @@
           type: "POST",
           url: `/api/post`,
           data: {
-            "no":no,
-            "date":dateString,
+            "no":no,//고유값 현재 시간 밀리초까지
+            "date":dateString,//내림차순으로 하려고 numbering
             "title":title,
             "writer":writer,
             "pwd":pwd,
             "content":content,
-            "searchDate":searchDate
+            "searchDate":searchDate //날짜 검색 하기 위해 문자열로 나타냄
           },
           error: function(xhr, status, error) {
             if (status == 400) {
@@ -104,7 +102,6 @@
             if (response["result"] == "success") {
               alert("등록 완료")
               window.location.href = "/";
-            //  $("#cartModal").modal("show");
             }
           }
         });

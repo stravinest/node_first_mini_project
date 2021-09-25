@@ -40,18 +40,12 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const no = urlParams.get("no");
-            //쿼리스트링으로 받아왔음 no 번호 받아옴
+            //쿼리스트링으로 받아왔음 no 번호 받아옴 전역변수로 no를 쓰겠음
 
             $(document).ready(function () {
 
-                get_detail();
-                $("#numberSelect").on("change", function () {
-                    let orderNum = parseInt($(this).val());
-                    $("#orderNumber").html(
-                        `<small class="mr-2 text-muted">총 수량 ${orderNum}개</small>${number2decimals(orderNum * sessionStorage.getItem("goodsPrice"))}`
-                    );
-                    sessionStorage.setItem("orderNum", orderNum);
-                });
+                get_detail();//바로 get_detail 실행
+              
             });
 
          
@@ -67,21 +61,16 @@
                         window.location.href = "/";
                     },
                     success: function (response) {
-                        let notice = response["detail"];
-                        $("#title").attr('value', notice["title"]);
+                        let notice = response["detail"];//db에서 가져온 정보 다시 입력
+                        $("#title").attr('value', notice["title"]); 
                         $("#writer").attr('value', notice["writer"]);
                         $("#content").text(notice["content"]);
-
-                        // sessionStorage.setItem("goodsId", goodsId);
-                        // sessionStorage.setItem("goodsName", goodsDetail["name"]);
-                        // sessionStorage.setItem("goodsPrice", goodsDetail["price"]);
-                        // sessionStorage.setItem("orderNum", 1);
                     }
                 });
             }
 
             //수정
-            function adjusting() {
+            function adjusting() { 
                 let title = $('#title').val()
                 let writer = $("#writer").val()
                 let pwd = $("#pwd").val()
@@ -93,7 +82,7 @@
 
                 $.ajax({
                     type: "PUT",
-                    url: `/api/adjust/${no}`,
+                    url: `/api/adjust/${no}`, //해당 no 요청
                     data: {
                         "title": title,
                         "writer": writer,
