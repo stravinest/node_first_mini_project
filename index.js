@@ -5,9 +5,10 @@ const port = 3000
 const connect = require('./schemas'); //스키마 연결 index.js 
 connect();//연결 실행
 
+//아래 미들웨어들은 내부적으로 next를 호출하고 있으므로 연달아 쓸수 있다.
 app.use(express.urlencoded({extended: false})) // 미들 웨어 사용 준비 완료
 app.use(express.json())// 데이터를 사용하기 쉽게 가공해주는 미들웨어
-app.use(express.static('public'));//어플리케이션의 정적 자산을 제공하는 역할을 하는 static static 사용 선언
+app.use(express.static('public'));//어플리케이션의 정적 자산을 제공하는 역할을 하는 static static 사용 선언 
 app.use((req, res, next) => {
   //console.log(req);
   next();
