@@ -35,4 +35,4 @@ deploy
  <li>AWS EC2
    
    <h2>실행화면 주소</h2>
- stravinest.shop
+ stravinest.shop // 심화주차로 변경
